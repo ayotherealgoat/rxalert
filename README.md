@@ -18,8 +18,6 @@
 ![Dashboard](public/screenshots/RxAlert-dashboard.png)
 ![Landing Page](public/screenshots/RxAlert-landing.png)
 
-> Make sure the screenshot filenames match exactly (`RxAlert-dashboard.png`, `RxAlert-medication-log.png`) and are in the `screenshots` folder at the root of the repo.
-
 ---
 
 ## Status
