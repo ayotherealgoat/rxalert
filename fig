@@ -1,0 +1,340 @@
+<x-layout title="Dashboard" heading="My Medication Reminders">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {{-- @if(app()->environment('local'))
+        <div class="mb-4 p-4 bg-gray-100 rounded">
+            <pre class="text-xs">{{ print_r($reminders->toArray(), true) }}</pre>
+        </div>
+        @endif --}}
+
+        {{--success message--}}
+        @if (session('success'))
+            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform -translate-y-2"
+                x-transition:enter-end="opacity-100 transform translate-y-0"
+                x-transition:leave="transition ease-in duration-300"
+                x-transition:leave-start="opacity-100 transform translate-y-0"
+                x-transition:leave-end="opacity-0 transform -translate-y-2"
+                class="mb-6 p-4 bg-green-100 text-green-800 rounded-lg border border-green-200 flex items-center">
+                <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd" />
+                </svg>
+                {{ session('success') }}
+            </div>
+        @endif
+
+        {{-- Header with stats and add button --}}
+        <div class="flex justify-between items-center mb-8" data-aos="fade-down">
+            <div class="flex items-center space-x-4">
+                <h2 class="text-3xl font-bold gradient-text">Your Medications</h2>
+                <span
+                    class="px-4 py-1.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full text-sm font-medium shadow-sm">
+                    {{ $reminders->count() }} Active
+                </span>
+            </div>
+            {{-- <a href="{{ route('reminders.create') }}"
+                class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-lg hover:opacity-90 transition-all duration-300 shadow-lg">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Add Medication
+            </a> --}}
+        </div>
+
+        {{-- Reminders grid --}}
+        @if($reminders->count())
+            <div class="grid gap-6 md:grid-cols-2">
+                @foreach($reminders as $reminder)
+                    <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-gray-100 overflow-hidden transform hover:-translate-y-1"
+                        data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="text-xl font-semibold text-gray-900">{{ $reminder->name }}</h3>
+                                    <div class="flex items-center mt-1">
+                                        <svg class="w-4 h-4 mr-1 text-indigo-600" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                        </svg>
+                                        <p class="text-indigo-600 font-medium">{{ $reminder->dosage }}mg</p>
+                                    </div>
+                                </div>
+                                <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+                                    {{ $reminder->times_per_day }}x daily
+                                </span>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div class="flex items-center text-gray-600">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    First dose: {{ \Carbon\Carbon::parse($reminder->first_dose_time)->format('h:i A') }}
+                                </div>
+                                @if($reminder->notes)
+                                    <div class="flex items-start text-gray-600">
+                                        <svg class="w-5 h-5 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        <span class="text-gray-500">{{ $reminder->notes }}</span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-t border-gray-100">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex items-center text-sm">
+                                        <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <span class="text-gray-600">Next dose:</span>
+                                        <span
+                                            class="font-semibold text-indigo-600 ml-1">{{ $reminder->getNextDoseTime()->format('h:i A') }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div
+                                            class="h-3 w-3 rounded-full {{ $reminder->isOverdue() ? 'bg-red-400' : 'bg-green-400' }} shadow-sm">
+                                        </div>
+                                        <span
+                                            class="ml-2 text-sm text-gray-500">{{ $reminder->isOverdue() ? 'Overdue' : 'On Track' }}</span>
+                                    </div>
+                                </div>
+                                <a href="{{ route('reminders.edit', $reminder->id) }}"
+                                    class="inline-flex items-center px-4 py-2 text-indigo-600 rounded-lg hover:bg-indigo-50 transition-all duration-300 text-sm font-medium border-2 border-indigo-200 hover:border-indigo-300">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                    Manage
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div class="text-center py-12">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No medications</h3>
+                <p class="mt-1 text-sm text-gray-500">Get started by adding your first medication reminder.</p>
+                <div class="mt-6">
+                    <a href="{{ route('reminders.create') }}"
+                        class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition-colors duration-150">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Add Medication
+                    </a>
+                </div>
+            </div>
+        @endif
+    </div>
+
+    <!-- Reminder Modal -->
+    <div id="reminderModal"
+        class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 backdrop-blur-sm transition-all duration-300">
+        <div
+            class="relative bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-[90%] text-center animate-fade-in border border-blue-100">
+
+            <!-- Floating Pill Icon -->
+            <div class="flex justify-center mb-4">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-blue-400 blur-xl opacity-50 rounded-full animate-pulse"></div>
+                    <svg class="w-16 h-16 text-blue-600 relative animate-bounce-slow" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016zM12 9v2m0 4h.01" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 14l9-5-9-5-9 5 9 5z" />
+                    </svg>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">💊 Time for your medication!</h2>
+            <p id="reminderText" class="text-gray-600 mb-6">It’s time to take your pills.</p>
+
+            <!-- Progress Ring -->
+            <div class="flex justify-center mb-6">
+                <svg id="progressRing" class="w-20 h-20" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" stroke="#E5E7EB" stroke-width="10" fill="none" />
+                    <circle id="progressBar" cx="50" cy="50" r="45" stroke="#2563EB" stroke-width="10" fill="none"
+                        stroke-dasharray="283" stroke-dashoffset="0" stroke-linecap="round"
+                        transform="rotate(-90 50 50)" />
+                </svg>
+            </div>
+
+            <button id="dismissReminder"
+                class="bg-blue-600 text-white font-semibold px-6 py-2 rounded-full shadow-md hover:bg-blue-700 transition-all duration-300">
+                I’ve taken it
+            </button>
+
+            <p class="text-xs text-gray-400 mt-3">Stay consistent — your health matters ❤️</p>
+        </div>
+    </div>
+
+    <style>
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+        }
+
+        @keyframes bounce-slow {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        .animate-bounce-slow {
+            animation: bounce-slow 2s infinite;
+        }
+    </style>
+
+    <script>
+document.addEventListener("DOMContentLoaded", async function () {
+    // Request notification and sound permissions
+    if (Notification.permission !== "granted") {
+        await Notification.requestPermission();
+    }
+
+    const modal = document.getElementById("reminderModal");
+    const text = document.getElementById("reminderText");
+    const dismiss = document.getElementById("dismissReminder");
+    const ring = document.getElementById("progressBar");
+
+    let audio; 
+    const activeReminders = new Set();
+
+    // Function to safely play audio (bypasses autoplay block)
+    function playAlarm() {
+        try {
+            audio = new Audio("/sounds/alarm.mp3");
+            audio.loop = true;
+            // Chrome blocks autoplay unless triggered by user — workaround:
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    console.log("🔇 Waiting for user interaction to play sound...");
+                    document.body.addEventListener("click", () => audio.play(), { once: true });
+                });
+            }
+        } catch (err) {
+            console.error("Failed to play audio:", err);
+        }
+    }
+
+    function stopAlarm() {
+        if (audio) {
+            audio.pause();
+            audio.currentTime = 0;
+        }
+    }
+
+    function triggerReminder(reminder) {
+        if (activeReminders.has(reminder.id)) return;
+        activeReminders.add(reminder.id);
+
+        const now = new Date();
+        const reminderTime = new Date(reminder.time);
+        // Only trigger if time is still due (within 2 minutes window)
+        if ((now - reminderTime) / 1000 > 120) return;
+
+        // Show browser notification
+        if (Notification.permission === "granted") {
+            new Notification("💊 Time to take your medication", {
+                body: reminder.name,
+                icon: "/images/pill.png"
+            });
+        }
+
+        // Show modal
+        text.textContent = `It’s time to take your ${reminder.name}.`;
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+
+        // Play alarm and vibrate
+        playAlarm();
+        if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
+
+        // Animate 30s progress ring
+        const total = 30;
+        let timeLeft = total;
+        const dashArray = 283;
+        const interval = setInterval(() => {
+            timeLeft--;
+            const offset = dashArray - (timeLeft / total) * dashArray;
+            ring.style.strokeDashoffset = offset;
+
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                modal.classList.add("hidden");
+                modal.classList.remove("flex");
+                stopAlarm();
+            }
+        }, 1000);
+
+        // Dismiss button
+        dismiss.onclick = () => {
+            clearInterval(interval);
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+            stopAlarm();
+        };
+    }
+
+    function checkReminders() {
+        fetch("/check-reminders")
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data.reminders)) {
+                    data.reminders.forEach(reminder => triggerReminder(reminder));
+                }
+            })
+            .catch(err => console.error("Error checking reminders:", err));
+    }
+
+    // Visibility-aware polling (only runs when tab is active)
+    document.addEventListener("visibilitychange", function () {
+        if (!document.hidden) checkReminders();
+    });
+
+    // Poll every 60 seconds
+    checkReminders();
+    setInterval(checkReminders, 60000);
+});
+</script>
+
+
+</x-layout>
