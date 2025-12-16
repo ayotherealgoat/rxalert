@@ -1,30 +1,24 @@
 # RxAlert
 
-<!-- <p align="center">
-  <img src="https://raw.githubusercontent.com/yourusername/rxalert/main/public/logo.png" alt="RxAlert Logo" width="250">
-</p> -->
-
-## Overview
-
-**RxAlert** is a medication reminder system designed to help users track their medications, receive timely notifications, and stay on top of their health routines. This application is built with **Laravel** and includes features such as scheduling reminders, sending notifications, and logging medication history.
+**RxAlert** is a medication reminder system designed to help users track their medications, receive timely notifications, and log their doses. The system is currently in development.
 
 ---
 
 ## Features
 
-- Add, edit, and delete medications.
-- Schedule reminders for multiple doses per day.
-- Receive notifications via email (or other channels if configured).
-- Track medication history and upcoming doses.
-- Admin panel for managing users and medications.
+- Add, edit, and delete medications
+- Schedule reminders for multiple doses per day
+- Receive notifications for upcoming doses
+- Track medication history
 
 ---
 
 ## Screenshots
 
 ![Dashboard](./screenshots/RxAlert-dashboard.png)
-![Landing Page](./screenshots/RxAlert-landing.png)
+![Medication Log](./screenshots/RxAlert-medication-log.png)
 
+> Make sure the screenshot filenames match exactly (`RxAlert-dashboard.png`, `RxAlert-medication-log.png`) and are in the `screenshots` folder at the root of the repo.
 
 ---
 
@@ -37,4 +31,3 @@ Currently in production — active development is ongoing.
 ## Author
 
 Ayomide Oyelola
-
