@@ -22,3 +22,20 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Laravel
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+.env
+
+# Capacitor / Mobile
+mobile/node_modules
+mobile/android/.gradle
+mobile/android/build
+mobile/android/app/build
+
+# OS files
+.DS_Store
+Thumbs.db

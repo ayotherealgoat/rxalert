@@ -1,0 +1,10 @@
+{
+  "appId": "com.rxalert.app",
+  "appName": "RxAlert",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "http://medication-reminder.test/",
+    "cleartext": true
+  }
+}
